@@ -1,6 +1,6 @@
 // src/vga_buffer.rs
 
-use core::fmt::{Arguments, Result, Write};
+use core::fmt::{Arguments as FmtArguments, Result as FmtResult, Write};
 use lazy_static::lazy_static;
 use spin::Mutex;
 use volatile::Volatile;
@@ -119,7 +119,7 @@ impl Writer {
 
 // Write and Result are from core::fmt
 impl Write for Writer {
-    fn write_str(&mut self, s: &str) -> Result {
+    fn write_str(&mut self, s: &str) -> FmtResult {
         self.write_string(s);
         Ok(())
     }
@@ -135,7 +135,7 @@ lazy_static! {
 
 // Argruments is from core::fmt
 #[doc(hidden)]
-pub fn _print(args: Arguments) {
+pub fn _print(args: FmtArguments) {
     WRITER.lock().write_fmt(args).unwrap();
 }
 
