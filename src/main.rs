@@ -10,7 +10,8 @@ use core::panic::PanicInfo;
 
 /// This function is called on panic.
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
+fn panic(info: &PanicInfo) -> ! {
+    println!("{}", info);
     loop {}
 }
 
@@ -18,7 +19,8 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle] // don't mangle the name of this function
 pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
-    println!("{}/{} = {}", 1.0, 3.0, 1.0 / 3.0);
+    println!("0b{:08b}/0b{:08b} = 0d{}", 1, 3, 1.0 / 3.0);
 
+    //panic!("Some panic message");
     loop {}
 }
