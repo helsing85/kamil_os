@@ -8,3 +8,4 @@ authors = ["kamil"]
 
 [dependencies]
 bootloader = "=0.9.22"
+volatile = "=0.2.6"
