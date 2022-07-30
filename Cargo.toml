@@ -7,4 +7,4 @@ authors = ["kamil"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bootloader = "0.9.22"
+bootloader = "=0.9.22"
