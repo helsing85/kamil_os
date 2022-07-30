@@ -1,14 +1,5 @@
 // kamil_os with Rust
-// https://os.phil-opp.com/freestanding-rust-binary/
-
-// An example for such a bare metal environment is the thumbv7em-none-eabihf target triple,
-// which describes an embedded ARM system. The details are not important,
-// all that matters is that the target triple has no underlying operating system,
-// which is indicated by the none in the target triple.
-// rustup target add thumbv7em-none-eabihf
-
-// Command to build for bare-metal
-// cargo build --target thumbv7em-none-eabihf
+// https://os.phil-opp.com/
 
 // main.rs
 #![no_std] // don't link the Rust standard library
@@ -23,8 +14,6 @@ use core::panic::PanicInfo;
 fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }
-
-//static HELLO: &[u8] = b"Hello World!";
 
 /// Overwriting the operating system entry point with our own _start function:
 #[no_mangle] // don't mangle the name of this function
