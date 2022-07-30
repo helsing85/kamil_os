@@ -18,7 +18,7 @@ fn panic(info: &PanicInfo) -> ! {
 /// Overwriting the operating system entry point with our own _start function:
 #[no_mangle] // don't mangle the name of this function
 pub extern "C" fn _start() -> ! {
-    println!("Hello World{}", "!");
+    print!("Hello World{}\n", "!");
     println!("0b{:08b}/0b{:08b} = 0d{}", 1, 3, 1.0 / 3.0);
 
     //panic!("Some panic message");
