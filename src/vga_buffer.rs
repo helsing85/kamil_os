@@ -38,7 +38,9 @@ impl ColorCode {
     }
 }
 
+//------------------------------------------
 // Text Buffer
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(C)] // This attribute guarantees that the struct’s fields are laid out exactly like in a C struct and thus guarantees the correct field ordering.
 struct ScreenChar {
@@ -53,6 +55,8 @@ const BUFFER_WIDTH: usize = 80;
 struct Buffer {
     chars: [[Volatile<ScreenChar>; BUFFER_WIDTH]; BUFFER_HEIGHT],
 }
+
+//------------------------------------------
 
 pub struct Writer {
     column_position: usize,
@@ -150,4 +154,28 @@ macro_rules! print {
 macro_rules! println {
     () => ($crate::print!("\n"));
     ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
+}
+
+//------------------------------------------
+
+#[test_case]
+fn test_println_simple() {
+    println!("test_println_simple output");
+}
+
+#[test_case]
+fn test_println_many() {
+    for _ in 0..200 {
+        println!("test_println_many output");
+    }
+}
+
+#[test_case]
+fn test_println_output() {
+    let s = "Some test string that fits on a single line";
+    println!("{}", s);
+    for (i, c) in s.chars().enumerate() {
+        let screen_char = WRITER.lock().buffer.chars[BUFFER_HEIGHT - 2][i].read();
+        assert_eq!(char::from(screen_char.ascii_character), c);
+    }
 }
