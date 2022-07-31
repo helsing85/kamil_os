@@ -48,6 +48,7 @@ where
 
 //------------------------------------------
 
+/// This function is managing tests
 pub fn test_runner(tests: &[&dyn Testable]) {
     serial_println!("Running {} tests", tests.len());
     for test in tests {
@@ -56,6 +57,7 @@ pub fn test_runner(tests: &[&dyn Testable]) {
     exit_qemu(QemuExitCode::Success);
 }
 
+/// This function is called on panic
 pub fn test_panic_handler(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {}\n", info);
@@ -73,7 +75,6 @@ pub extern "C" fn _start() -> ! {
     loop {}
 }
 
-/// This function is called on panic for 'cargo test'
 #[cfg(test)]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
