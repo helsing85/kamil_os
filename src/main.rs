@@ -20,10 +20,17 @@ pub extern "C" fn _start() -> ! {
     print!("Hello World{}\n", "!");
     println!("0b{:08b}/0b{:08b} = 0d{}", 1, 3, 1.0 / 3.0);
 
+    kamil_os::init();
+
     //panic!("Some panic message");
+
+    // invoke a breakpoint exception
+    x86_64::instructions::interrupts::int3();
 
     #[cfg(test)]
     test_main();
+
+    println!("It did not crash!");
 
     loop {}
 }
