@@ -34,10 +34,10 @@ pub extern "C" fn _start() -> ! {
     // };
 
     // invoke stack overflow fault
-    fn stack_overflow() {
-        stack_overflow();
-    }
-    stack_overflow();
+    // fn stack_overflow() {
+    //     stack_overflow();
+    // }
+    // stack_overflow();
 
     #[cfg(test)]
     test_main();

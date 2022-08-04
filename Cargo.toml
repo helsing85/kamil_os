@@ -27,6 +27,14 @@ test-args = ["-device",
 test-success-exit-code = 33 # (0x10 << 1) | 1
 test-timeout = 5          # (in seconds)
 
+
+# Disable the test harness for the test
+# as we can't continue execution after the fault
+# so more than one test doesn't make sense.
 [[test]]
 name = "should_panic"
+harness = false
+
+[[test]]
+name = "stack_overflow"
 harness = false
