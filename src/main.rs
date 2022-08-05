@@ -44,11 +44,7 @@ pub extern "C" fn _start() -> ! {
 
     println!("It did not crash!");
 
-    loop {
-        for _ in 0..10000 {
-            print!("-");
-        }
-    }
+    kamil_os::hlt_loop();
 }
 
 //------------------------------------------
@@ -58,7 +54,7 @@ pub extern "C" fn _start() -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
-    loop {}
+    kamil_os::hlt_loop();
 }
 
 /// This function is called on panic during test
