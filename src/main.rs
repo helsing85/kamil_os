@@ -44,7 +44,11 @@ pub extern "C" fn _start() -> ! {
 
     println!("It did not crash!");
 
-    loop {}
+    loop {
+        for _ in 0..10000 {
+            print!("-");
+        }
+    }
 }
 
 //------------------------------------------
