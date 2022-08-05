@@ -18,7 +18,7 @@ lazy_static! {
                 .set_handler_fn(double_fault_handler)
                 .set_stack_index(gdt::DOUBLE_FAULT_IST_INDEX);
         }
-        idt[InterruptIndex::Timer.as_usize()].set_handler_fn(timer_interrupt_handler);
+        idt[InterruptIndex::Timer.into()].set_handler_fn(timer_interrupt_handler);
         idt
     };
 }
@@ -43,7 +43,7 @@ extern "x86-interrupt" fn timer_interrupt_handler(_stack_frame: InterruptStackFr
 
     unsafe {
         PICS.lock()
-            .notify_end_of_interrupt(InterruptIndex::Timer.as_u8());
+            .notify_end_of_interrupt(InterruptIndex::Timer.into());
     }
 }
 
@@ -70,12 +70,14 @@ pub enum InterruptIndex {
     Timer = PIC_1_OFFSET,
 }
 
-impl InterruptIndex {
-    fn as_u8(self) -> u8 {
-        self as u8
+impl From<InterruptIndex> for u8 {
+    fn from(i: InterruptIndex) -> Self {
+        i as u8
     }
+}
 
-    fn as_usize(self) -> usize {
-        usize::from(self.as_u8())
+impl From<InterruptIndex> for usize {
+    fn from(i: InterruptIndex) -> Self {
+        i as usize
     }
 }
