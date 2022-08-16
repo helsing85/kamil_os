@@ -11,8 +11,8 @@
 
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
-use kamil_os::{memory::active_level_4_table, print, println};
-use x86_64::{structures::paging::PageTable, VirtAddr};
+use kamil_os::{memory::translate_addr, print, println};
+use x86_64::VirtAddr;
 
 //------------------------------------------
 
@@ -24,55 +24,23 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     // Interrupts initialization
     kamil_os::init();
 
-    //panic!("Some panic message");
-
-    // invoke a breakpoint exception
-    //x86_64::instructions::interrupts::int3();
-
-    // invoke a double fault
-    // unsafe {
-    //     *(0xdeadbeef as *mut u64) = 64;
-    // };
-
-    // invoke stack overflow fault
-    // fn stack_overflow() {
-    //     stack_overflow();
-    // }
-    // stack_overflow();
-
-    // // invoke page fault
-    // let ptr = 0x206e9f as *mut u32;
-    // // read from a code page
-    // unsafe {
-    //     let _x = *ptr;
-    // }
-    // println!("read worked");
-    // // write to a code page
-    // unsafe {
-    //     *ptr = 42;
-    // }
-    // println!("write worked");
-
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
-    let l4_table = unsafe { active_level_4_table(phys_mem_offset) };
 
-    for (i, entry) in l4_table.iter().enumerate() {
-        if !entry.is_unused() {
-            println!("L4 Entry {i}: {entry:?}");
+    let addresses = [
+        // the identity-mapped vga buffer page
+        0xb8000,
+        // some code page
+        0x201008,
+        // some stack page
+        0x0100_0020_1a10,
+        // virtual address mapped to physical address 0
+        boot_info.physical_memory_offset,
+    ];
 
-            // get the physical address from the entry and convert it
-            let phys = entry.frame().unwrap().start_address();
-            let virt = phys.as_u64() + boot_info.physical_memory_offset;
-            let ptr = VirtAddr::new(virt).as_mut_ptr();
-            let l3_table: &PageTable = unsafe { &*ptr };
-
-            // print non-empty entries of the level 3 table
-            for (i, entry) in l3_table.iter().enumerate() {
-                if !entry.is_unused() {
-                    println!("  L3 Entry {}: {:?}", i, entry);
-                }
-            }
-        }
+    for &address in &addresses {
+        let virt = VirtAddr::new(address);
+        let phys = unsafe { translate_addr(virt, phys_mem_offset) };
+        println!("{virt:?} -> {phys:?}");
     }
 
     #[cfg(test)]
