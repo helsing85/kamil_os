@@ -11,8 +11,8 @@
 
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
-use kamil_os::{memory::translate_addr, print, println};
-use x86_64::VirtAddr;
+use kamil_os::{memory, print, println};
+use x86_64::{structures::paging::Translate, VirtAddr};
 
 //------------------------------------------
 
@@ -25,6 +25,8 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     kamil_os::init();
 
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
+
+    let mapper = unsafe { memory::init(phys_mem_offset) };
 
     let addresses = [
         // the identity-mapped vga buffer page
@@ -39,7 +41,7 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 
     for &address in &addresses {
         let virt = VirtAddr::new(address);
-        let phys = unsafe { translate_addr(virt, phys_mem_offset) };
+        let phys = mapper.translate_addr(virt);
         println!("{virt:?} -> {phys:?}");
     }
 
