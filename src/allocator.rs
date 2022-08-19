@@ -1,10 +1,11 @@
 // src/allocator.rs
 
 pub mod bump;
+pub mod linked_list;
 
 use alloc::alloc::{GlobalAlloc, Layout};
-use bump::BumpAllocator;
 use core::ptr::null_mut;
+use linked_list::LinkedListAllocator;
 use x86_64::{
     structures::paging::{
         mapper::MapToError, FrameAllocator, Mapper, Page, PageTableFlags, Size4KiB,
@@ -64,14 +65,7 @@ pub fn init_heap(
 }
 
 /// Align the given address `addr` upwards to alignment `align`.
-// fn align_up(addr: usize, align: usize) -> usize {
-//     let remainder = addr % align;
-//     if remainder == 0 {
-//         addr // addr already aligned
-//     } else {
-//         addr - remainder + align
-//     }
-// }
+///
 /// Requires that `align` is a power of two.
 fn align_up(addr: usize, align: usize) -> usize {
     (addr + align - 1) & !(align - 1)
@@ -80,7 +74,7 @@ fn align_up(addr: usize, align: usize) -> usize {
 //------------------------------------------
 
 #[global_allocator]
-static ALLOCATOR: Locked<BumpAllocator> = Locked::new(BumpAllocator::new());
+static ALLOCATOR: Locked<LinkedListAllocator> = Locked::new(LinkedListAllocator::new());
 
 pub struct Dummy;
 
