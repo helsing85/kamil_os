@@ -5,6 +5,7 @@ use alloc::task::Wake;
 use alloc::{collections::BTreeMap, sync::Arc};
 use core::task::{Context, Poll, Waker};
 use crossbeam_queue::ArrayQueue;
+use x86_64::instructions::interrupts::{self, enable_and_hlt};
 
 struct TaskWaker {
     task_id: TaskId,
@@ -54,6 +55,7 @@ impl Executor {
     pub fn run(&mut self) -> ! {
         loop {
             self.run_ready_tasks();
+            self.sleep_if_idle();
         }
     }
 
@@ -90,6 +92,15 @@ impl Executor {
                 }
                 Poll::Pending => {}
             }
+        }
+    }
+
+    fn sleep_if_idle(&self) {
+        interrupts::disable();
+        if self.task_queue.is_empty() {
+            enable_and_hlt();
+        } else {
+            interrupts::enable();
         }
     }
 }
